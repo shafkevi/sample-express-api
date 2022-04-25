@@ -8,6 +8,11 @@ const cors = require('cors');
 const PORT = process.env.PORT || 8080;
 const HOST = '0.0.0.0';
 
+  const redis = new Redis({
+    port: process.env.REDIS_PORT,
+    host: process.env.REDIS_HOST,
+    tls: {}
+  });
 
 // App
 const app = express();
@@ -21,19 +26,12 @@ app.get('/env', (req, res) => {
     console.log(process.env);
     res.send(process.env);
 });
+
 app.get('/redis/put/:key/:value', async (req, res) => {
-  const redis = new Redis({
-    port: process.env.REDIS_PORT,
-    host: process.env.REDIS_HOST,
-  });
   await redis.set(req.params.key, req.params.value);
   res.send({"message": `I wrote ${req.params.key}:${req.params.value} for you`});
 });
 app.get('/redis/get/:key', async (req, res) => {
-  const redis = new Redis({
-    port: process.env.REDIS_PORT,
-    host: process.env.REDIS_HOST,
-  });
   const value = await redis.get(req.params.key);
   res.send({"message": `I grabbed ${req.params.key}:${value} for you`});
 });
