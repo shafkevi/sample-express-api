@@ -22,10 +22,6 @@ app.get('/',  (req, res) => {
   res.send({"message": `I am the api running on port ${process.env.PORT}`});
 });
 
-app.get('/env', (req, res) => {
-    console.log(process.env);
-    res.send(process.env);
-});
 
 app.get('/redis/put/:key/:value', async (req, res) => {
   await redis.set(req.params.key, req.params.value);
