@@ -2,11 +2,22 @@
 
 const Redis = require('ioredis');
 const express = require('express');
+const { Pool, Client } = require("pg");
 const cors = require('cors');
 
 // Constants
 const PORT = process.env.PORT || 8080;
 const HOST = '0.0.0.0';
+
+
+  const credentials = {
+    user: process.env.PG_USER || "postgres",
+    host: process.env.PG_HOST || "localhost",
+    database: process.env.PG_DATABASE || "nodedemo",
+    password: process.env.PG_PASSWORD || "yourpassword",
+    port: process.env.PG_PORT || 5432,
+  };
+  const pgClient = new Client(credentials);
 
   const redis = new Redis({
     port: process.env.REDIS_PORT,
@@ -30,6 +41,28 @@ app.get('/redis/put/:key/:value', async (req, res) => {
 app.get('/redis/get/:key', async (req, res) => {
   const value = await redis.get(req.params.key);
   res.send({"message": `I grabbed ${req.params.key}:${value} for you`});
+});
+
+
+app.get('/pg/init', async (req, res) => {
+  await pgClient.connect();
+  const result = await pgClient.query(`create table if not exists items (key text, value text)`);
+  console.log(result);
+  res.send({"message": `I initialized the table items for you.`});
+});
+
+app.get('/pg/put/:key/:value', async (req, res) => {
+  await pgClient.connect();
+  const result = await pgClient.query(`insert into items(key,value)(${req.params.key}, ${req.params.value})`);
+  console.log(result);
+  res.send({"message": `I wrote ${req.params.key}:${req.params.value} for you`});
+});
+
+app.get('/pg/get/:key/', async (req, res) => {
+  await pgClient.connect();
+  const result = await pgClient.query(`select * from items where key = ${req.params.key}`);
+  console.log(result);
+  res.send({"message": `I grabbed ${req.params.key}:TBD for you`});
 });
 
 app.listen(PORT, HOST);
