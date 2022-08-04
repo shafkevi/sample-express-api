@@ -17,9 +17,6 @@ const HOST = '0.0.0.0';
     password: process.env.PG_PASSWORD || "yourpassword",
     port: process.env.PG_PORT || 5432,
   };
-  const pgClient = new Client(credentials);
-  console.log(credentials);
-  console.log(pgClient);
 
   const redis = new Redis({
     port: process.env.REDIS_PORT,
@@ -48,7 +45,10 @@ app.get('/redis/get/:key', async (req, res) => {
 
 app.get('/pg/init', async (req, res) => {
   console.log('Init pg');
+  const pgClient = new Client(credentials);
+  console.log('client init')
   await pgClient.connect();
+  console.log('client connected')
   const result = await pgClient.query(`create table if not exists items (key text, value text)`);
   console.log(result);
   res.send({"message": `I initialized the table items for you.`});
@@ -56,7 +56,10 @@ app.get('/pg/init', async (req, res) => {
 
 app.get('/pg/put/:key/:value', async (req, res) => {
   console.log('put pg')
+  const pgClient = new Client(credentials);
+  console.log('client init')
   await pgClient.connect();
+  console.log('client connected')
   const result = await pgClient.query(`insert into items(key,value)(${req.params.key}, ${req.params.value})`);
   console.log(result);
   res.send({"message": `I wrote ${req.params.key}:${req.params.value} for you`});
@@ -64,7 +67,10 @@ app.get('/pg/put/:key/:value', async (req, res) => {
 
 app.get('/pg/get/:key/', async (req, res) => {
   console.log('get pg')
+  const pgClient = new Client(credentials);
+  console.log('client init')
   await pgClient.connect();
+  console.log('client connected')
   const result = await pgClient.query(`select * from items where key = ${req.params.key}`);
   console.log(result);
   res.send({"message": `I grabbed ${req.params.key}:TBD for you`});
