@@ -73,7 +73,15 @@ app.get('/pg/get/:key/', async (req, res) => {
   console.log('client connected')
   const result = await pgClient.query(`select * from items where key = '${req.params.key}'`);
   console.log(result);
-  res.send({"message": `I grabbed ${req.params.key}:TBD for you`});
+  let value;
+  try {
+    value = result.rows[0].value;
+    res.send({"message": `I grabbed ${req.params.key}:${value} for you`});
+  }
+  catch (err){
+    res.send({"message": `I couldn't find ${req.params.key} in my database, beep boop bop.`});
+  }
+  
 });
 
 app.listen(PORT, HOST);
