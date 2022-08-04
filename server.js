@@ -60,7 +60,7 @@ app.get('/pg/put/:key/:value', async (req, res) => {
   console.log('client init')
   await pgClient.connect();
   console.log('client connected')
-  const result = await pgClient.query(`insert into items(key,value)(${req.params.key}, ${req.params.value})`);
+  const result = await pgClient.query(`insert into items(key,value)('${req.params.key}', '${req.params.value}')`);
   console.log(result);
   res.send({"message": `I wrote ${req.params.key}:${req.params.value} for you`});
 });
@@ -71,7 +71,7 @@ app.get('/pg/get/:key/', async (req, res) => {
   console.log('client init')
   await pgClient.connect();
   console.log('client connected')
-  const result = await pgClient.query(`select * from items where key = ${req.params.key}`);
+  const result = await pgClient.query(`select * from items where key = '${req.params.key}'`);
   console.log(result);
   res.send({"message": `I grabbed ${req.params.key}:TBD for you`});
 });
