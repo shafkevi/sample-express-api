@@ -18,6 +18,8 @@ const HOST = '0.0.0.0';
     port: process.env.PG_PORT || 5432,
   };
   const pgClient = new Client(credentials);
+  console.log(credentials);
+  console.log(pgClient);
 
   const redis = new Redis({
     port: process.env.REDIS_PORT,
@@ -45,6 +47,7 @@ app.get('/redis/get/:key', async (req, res) => {
 
 
 app.get('/pg/init', async (req, res) => {
+  console.log('Init pg');
   await pgClient.connect();
   const result = await pgClient.query(`create table if not exists items (key text, value text)`);
   console.log(result);
@@ -52,6 +55,7 @@ app.get('/pg/init', async (req, res) => {
 });
 
 app.get('/pg/put/:key/:value', async (req, res) => {
+  console.log('put pg')
   await pgClient.connect();
   const result = await pgClient.query(`insert into items(key,value)(${req.params.key}, ${req.params.value})`);
   console.log(result);
@@ -59,6 +63,7 @@ app.get('/pg/put/:key/:value', async (req, res) => {
 });
 
 app.get('/pg/get/:key/', async (req, res) => {
+  console.log('get pg')
   await pgClient.connect();
   const result = await pgClient.query(`select * from items where key = ${req.params.key}`);
   console.log(result);
