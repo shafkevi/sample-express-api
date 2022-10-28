@@ -18,11 +18,17 @@ const HOST = '0.0.0.0';
     port: process.env.PG_PORT || 5432,
   };
 
-  const redis = new Redis({
-    port: process.env.REDIS_PORT,
-    host: process.env.REDIS_HOST,
-    tls: {}
-  });
+  let redis;
+  try {
+    redis = new Redis({
+      port: process.env.REDIS_PORT,
+      host: process.env.REDIS_HOST,
+      tls: {}
+    });
+  }
+  catch (e){
+    console.log(e)
+  }
 
 // App
 const app = express();
