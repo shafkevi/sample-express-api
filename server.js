@@ -48,6 +48,9 @@ app.get('/redis/get/:key', async (req, res) => {
   res.send({"message": `I grabbed ${req.params.key}:${value} for you`});
 });
 
+app.get('/pg', async (req, res) => {
+  res.send({"message": `Thanks for hitting /pg`});
+});
 
 app.get('/pg/init', async (req, res) => {
   console.log('Init pg');
